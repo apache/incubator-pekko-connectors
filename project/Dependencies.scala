@@ -41,9 +41,8 @@ object Dependencies {
   val hoverflyVersion = "0.14.1"
   val scalaCheckVersion = "1.17.0"
 
-  val LogbackForSlf4j1Version = "1.2.13"
-  val LogbackForSlf4j2Version = "1.3.14"
-  val LogbackVersion = if (PekkoBinaryVersion == "1.0") LogbackForSlf4j1Version else LogbackForSlf4j2Version
+  val Slf4jVersion = "2.0.12"
+  val LogbackVersion = "1.3.14"
 
   /**
    * Calculates the scalatest version in a format that is used for `org.scalatestplus` scalacheck artifacts
@@ -64,9 +63,6 @@ object Dependencies {
   val GoogleAuthVersion = "1.23.0"
   val JwtScalaVersion = "10.0.0"
 
-  val log4jOverSlf4jVersion = "1.7.36"
-  val jclOverSlf4jVersion = "1.7.36"
-
   val CommonSettings = Seq(
     // These libraries are added to all modules via the `Common` AutoPlugin
     libraryDependencies ++= Seq(
@@ -78,6 +74,7 @@ object Dependencies {
       "org.apache.pekko" %% "pekko-stream" % PekkoVersion,
       "org.apache.pekko" %% "pekko-stream-testkit" % PekkoVersion,
       "org.apache.pekko" %% "pekko-slf4j" % PekkoVersion,
+      "org.slf4j" % "slf4j-api" % Slf4jVersion,
       "ch.qos.logback" % "logback-classic" % LogbackVersion,
       "org.scalatest" %% "scalatest" % ScalaTestVersion,
       "com.dimafeng" %% "testcontainers-scala-scalatest" % TestContainersScalaTestVersion,
@@ -155,7 +152,7 @@ object Dependencies {
     libraryDependencies ++= Seq(
       "org.apache.pekko" %% "pekko-http" % PekkoHttpVersion,
       "org.apache.pekko" %% "pekko-http-spray-json" % PekkoHttpVersion,
-      "org.slf4j" % "jcl-over-slf4j" % jclOverSlf4jVersion % Test) ++ JacksonDatabindDependencies)
+      "org.slf4j" % "jcl-over-slf4j" % Slf4jVersion % Test) ++ JacksonDatabindDependencies)
 
   val File = Seq(
     libraryDependencies ++= Seq(
@@ -174,13 +171,15 @@ object Dependencies {
       "com.sksamuel.avro4s" %% "avro4s-core" % avro4sVersion.value % Test,
       "org.scalacheck" %% "scalacheck" % scalaCheckVersion % Test,
       "org.specs2" %% "specs2-core" % "4.20.5" % Test,
-      "org.slf4j" % "log4j-over-slf4j" % log4jOverSlf4jVersion % Test))
+      "org.slf4j" % "slf4j-api" % Slf4jVersion % Test,
+      "org.slf4j" % "log4j-over-slf4j" % Slf4jVersion % Test))
 
   val Ftp = Seq(
     libraryDependencies ++= Seq(
       "commons-net" % "commons-net" % "3.10.0",
       "com.hierynomus" % "sshj" % "0.38.0",
-      "ch.qos.logback" % "logback-classic" % LogbackForSlf4j2Version % Test) ++ Mockito)
+      "org.slf4j" % "slf4j-api" % Slf4jVersion % Test,
+      "ch.qos.logback" % "logback-classic" % LogbackVersion % Test) ++ Mockito)
 
   val GeodeVersion = "1.15.1"
   val GeodeVersionForDocs = "115"
@@ -193,7 +192,8 @@ object Dependencies {
         "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % JacksonDatabindVersion,
         "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % JacksonDatabindVersion,
         "org.apache.logging.log4j" % "log4j-to-slf4j" % "2.23.0" % Test,
-        "ch.qos.logback" % "logback-classic" % LogbackForSlf4j2Version % Test) ++ JacksonDatabindDependencies ++
+        "org.slf4j" % "slf4j-api" % Slf4jVersion % Test,
+        "ch.qos.logback" % "logback-classic" % LogbackVersion % Test) ++ JacksonDatabindDependencies ++
       (if (isScala3.value)
          Seq.empty // Equivalent and relevant shapeless functionality has been mainlined into Scala 3 language/stdlib
        else Seq(
@@ -234,7 +234,8 @@ object Dependencies {
       "org.apache.pekko" %% "pekko-http" % PekkoHttpVersion,
       "org.apache.pekko" %% "pekko-parsing" % PekkoHttpVersion,
       "org.apache.arrow" % "arrow-memory-netty" % ArrowVersion % Test,
-      "ch.qos.logback" % "logback-classic" % LogbackForSlf4j2Version % Test) ++ Mockito)
+      "org.slf4j" % "slf4j-api" % Slf4jVersion % Test,
+      "ch.qos.logback" % "logback-classic" % LogbackVersion % Test) ++ Mockito)
 
   val GooglePubSub = Seq(
     libraryDependencies ++= Seq(
@@ -277,7 +278,7 @@ object Dependencies {
           "slf4j-log4j12"),
         ("org.apache.hadoop" % "hadoop-mapreduce-client-core" % hadoopVersion).exclude("log4j", "log4j").exclude(
           "org.slf4j", "slf4j-log4j12"),
-        "org.slf4j" % "log4j-over-slf4j" % log4jOverSlf4jVersion % Test))
+        "org.slf4j" % "log4j-over-slf4j" % Slf4jVersion % Test))
   }
 
   val HadoopVersion = "3.3.6"
@@ -292,7 +293,7 @@ object Dependencies {
         "slf4j-log4j12"),
       ("org.apache.hadoop" % "hadoop-minicluster" % HadoopVersion % Test).exclude("log4j", "log4j").exclude("org.slf4j",
         "slf4j-log4j12"),
-      "org.slf4j" % "log4j-over-slf4j" % log4jOverSlf4jVersion % Test) ++ Mockito)
+      "org.slf4j" % "log4j-over-slf4j" % Slf4jVersion % Test) ++ Mockito)
 
   val HuaweiPushKit = Seq(
     libraryDependencies ++= Seq(
@@ -334,7 +335,8 @@ object Dependencies {
       _.excludeAll(
         ExclusionRule("software.amazon.awssdk", "apache-client"),
         ExclusionRule("software.amazon.awssdk", "netty-nio-client"))) ++ Seq(
-      "ch.qos.logback" % "logback-classic" % LogbackForSlf4j2Version % Test) ++ Mockito)
+      "org.slf4j" % "slf4j-api" % Slf4jVersion % Test,
+      "ch.qos.logback" % "logback-classic" % LogbackVersion % Test) ++ Mockito)
 
   val KuduVersion = "1.10.1"
   val Kudu = Seq(
@@ -371,7 +373,8 @@ object Dependencies {
     Seq(
       libraryDependencies ++= Seq(
         "io.pravega" % "pravega-client" % PravegaVersion,
-        "org.slf4j" % "log4j-over-slf4j" % log4jOverSlf4jVersion % Test))
+        "org.slf4j" % "slf4j-api" % Slf4jVersion % Test,
+        "org.slf4j" % "log4j-over-slf4j" % Slf4jVersion % Test))
   }
 
   val Reference = Seq(
@@ -436,7 +439,7 @@ object Dependencies {
       "org.apache.solr" % "solr-solrj" % SolrjVersion,
       ("org.apache.solr" % "solr-test-framework" % SolrjVersion % Test).exclude("org.apache.logging.log4j",
         "log4j-slf4j-impl"),
-      "org.slf4j" % "log4j-over-slf4j" % log4jOverSlf4jVersion % Test))
+      "org.slf4j" % "log4j-over-slf4j" % Slf4jVersion % Test))
 
   val Sqs = Seq(
     libraryDependencies ++= Seq(
